@@ -15,7 +15,7 @@ function signup(req, res) {
         req.body.profile = newProfile._id
         User.create(req.body)
         .then(user => {
-          // TODO: Send back a JWT instead of the user
+          const token = createJWT(user)
           res.status(200).json(user)
         })
         .catch(err => {
@@ -29,5 +29,17 @@ function signup(req, res) {
     res.status(500).json({err: err.message})
   })
 }
+/*----- Helper Functions -----*/
 
-export { signup, }
+function createJWT(user) {
+  return jwt.sign(
+    { user }, // data payload
+    process.env.SECRET,
+    { expiresIn: '24h' }
+  )
+}
+
+export { 
+  signup,
+  createJWT
+}
